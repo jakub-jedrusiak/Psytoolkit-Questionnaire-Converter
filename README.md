@@ -16,7 +16,7 @@ pip install customtkinter
 
 ### Windows executable
 
-Use releases to download the current .exe file. Known problems include a need to click on something multiple times before it starts to work.
+Use [releases](https://github.com/jakub-jedrusiak/Psytoolkit-Questionnaire-Formatter/releases) to download the current .exe file. Known problems include a need to click on something multiple times before it starts to work.
 
 ## To-do
 
