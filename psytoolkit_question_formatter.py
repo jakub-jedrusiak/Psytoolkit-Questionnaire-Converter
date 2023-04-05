@@ -6,7 +6,6 @@ import tkinter.messagebox as msg
 import customtkinter
 
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
-customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
 def format_text():
     text = input_text.get("1.0", "end").strip()
@@ -44,7 +43,7 @@ def remove_scale_entry():
         scale_entry.destroy()
 
 root = customtkinter.CTk()
-root.title("PsyToolkit Questionnaire Converter")
+root.title("PsyToolkit Questionnaire Formatter")
 
 # Left frame for text input, label, and format button
 left_frame = customtkinter.CTkFrame(root)
