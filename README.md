@@ -21,4 +21,4 @@ Use releases to download the current .exe file. Known problems include a need to
 ## To-do
 
 - [ ] Other question types than radio.
-- [ ] Options like random, requied etc.
+- [X] Options like random, requied etc.
