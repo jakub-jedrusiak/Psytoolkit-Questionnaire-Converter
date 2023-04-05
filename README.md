@@ -2,7 +2,7 @@
 
 A simple python tool for fast conversion of questionnaires into PsyToolkit format.
 
-![gif example](https://github.com/jakub-jedrusiak/Psytoolkit-Questionnaire-Converter/blob/main/example.gif)
+![gif example](https://github.com/jakub-jedrusiak/Psytoolkit-Questionnaire-Converter/blob/main/images/example.gif)
 
 ## Installing
 
