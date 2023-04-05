@@ -44,7 +44,7 @@ def remove_scale_entry():
         scale_entry.destroy()
 
 root = customtkinter.CTk()
-root.title("Text Formatter")
+root.title("PsyToolkit Questionnaire Converter")
 
 # Left frame for text input, label, and format button
 left_frame = customtkinter.CTkFrame(root)
