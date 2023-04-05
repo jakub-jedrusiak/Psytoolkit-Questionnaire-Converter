@@ -1,4 +1,4 @@
-# Psytoolkit-Questionnaire-Converter
+# Psytoolkit Questionnaire Formatter
 
 A simple python tool for fast conversion of questionnaires into PsyToolkit format.
 
