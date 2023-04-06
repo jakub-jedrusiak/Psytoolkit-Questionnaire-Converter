@@ -45,4 +45,4 @@ Use [releases](https://github.com/jakub-jedrusiak/Psytoolkit-Questionnaire-Forma
 - [ ] time options
 
 ## Note
-This is a community tool. I'm not a PsyToolkit developer or author. That would be prof. Gijsbert Stoet.
+This is a community tool. I'm not a PsyToolkit developer nor author. That would be prof. Gijsbert Stoet.
