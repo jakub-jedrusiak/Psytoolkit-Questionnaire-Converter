@@ -4,7 +4,9 @@
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/jakub-jedrusiak/Psytoolkit-Questionnaire-Formatter)
 ![GitHub](https://img.shields.io/github/license/jakub-jedrusiak/Psytoolkit-Questionnaire-Formatter)
+<a href="https://twitter.com/intent/follow?screen_name=jakub_jedrusiak">
 ![Twitter Follow](https://img.shields.io/twitter/follow/jakub_jedrusiak?style=social)
+</a>
 
 <!-- badges: end -->
 
