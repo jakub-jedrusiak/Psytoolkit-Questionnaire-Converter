@@ -2,9 +2,12 @@
 A simple formatter for making questionaires in PsyToolbox faster by Jakub Jędrusiak.
 '''
 
+import sys
+import os
 import tkinter
 import customtkinter as CTk
 from PIL import Image, ImageTk
+
 
 CTk.set_appearance_mode("dark")  # Modes: system (default), light, dark
 
@@ -62,12 +65,20 @@ def copy_to_clipboard():
         root.clipboard_clear()
         root.clipboard_append(formatted_text)
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 # root
 root = CTk.CTk()
 root.title("PsyToolkit Questionnaire Formatter")
-im = Image.open("./images/brain.png")
-photo = ImageTk.PhotoImage(im)
+photo = ImageTk.PhotoImage(file=resource_path("./images/brain.png"))
 root.wm_iconphoto(True, photo)
 left_frame = CTk.CTkFrame(root)
 left_frame.grid(row=2, column=0, padx=10, pady=10)
