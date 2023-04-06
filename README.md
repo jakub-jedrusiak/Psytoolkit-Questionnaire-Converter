@@ -1,8 +1,16 @@
-# Psytoolkit Questionnaire Formatter
+# Psytoolkit Questionnaire Formatter <img src="images/brain.ico" align="right" height="138" alt="" />
+
+<!-- badges: start -->
+
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/jakub-jedrusiak/Psytoolkit-Questionnaire-Formatter)
+![GitHub](https://img.shields.io/github/license/jakub-jedrusiak/Psytoolkit-Questionnaire-Formatter)
+![Twitter Follow](https://img.shields.io/twitter/follow/jakub_jedrusiak?style=social)
+
+<!-- badges: end -->
 
 A simple python tool for fast conversion of questionnaires into [PsyToolkit](https://www.psytoolkit.org/) format.
 
-![gif example](https://github.com/jakub-jedrusiak/Psytoolkit-Questionnaire-Converter/blob/main/images/example.gif)
+![gif example](images/example.gif)
 
 ## Installing
 
