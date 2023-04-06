@@ -1,6 +1,6 @@
 # Psytoolkit Questionnaire Formatter
 
-A simple python tool for fast conversion of questionnaires into PsyToolkit format.
+A simple python tool for fast conversion of questionnaires into [PsyToolkit](https://www.psytoolkit.org/) format.
 
 ![gif example](https://github.com/jakub-jedrusiak/Psytoolkit-Questionnaire-Converter/blob/main/images/example.gif)
 
@@ -33,3 +33,6 @@ Use [releases](https://github.com/jakub-jedrusiak/Psytoolkit-Questionnaire-Forma
 - [ ] sounds
 - [ ] videos
 - [ ] time options
+
+## Note
+This is a community tool. I'm not a PsyToolkit developer or author. That would be prof. Gijsbert Stoet.
