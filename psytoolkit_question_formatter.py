@@ -4,6 +4,7 @@ A simple formatter for making questionaires in PsyToolbox faster by Jakub Jędru
 
 import tkinter
 import customtkinter as CTk
+from PIL import Image, ImageTk
 
 CTk.set_appearance_mode("dark")  # Modes: system (default), light, dark
 
@@ -17,16 +18,24 @@ def format_text():
     lines = text.split("\n")
     scale = scale_text.get("1.0", "end").strip()
     answers = scale.split("\n")
+    q_type = question_type.get()
     output = ""
-    count = 1 # for labels
+    count = 1  # for labels
     for line in lines:
-        output += f"l: {label_text}_{count}\nt: radio\n"
+        output += f"l: {label_text}_{count}\nt: {q_type}\n"
         if random.get():
             output += "o: random\n"
         if link.get():
             output += "o: link\n"
-        if free.get():
+        if q_type == "radio" and free.get():
             output += "o: free\n"
+        if q_type == "check" and requied.get():
+            output += "o: requied"
+            if min_entry.get() != "":
+                output += f" {min_entry.get()}"
+                if max_entry.get() != "":
+                    output += f" {max_entry.get()}"
+        output += "\n"
         if sep.get():
             output += "o: sep\n"
         if qf.get():
@@ -51,13 +60,93 @@ def copy_to_clipboard():
         root.clipboard_clear()
         root.clipboard_append(formatted_text)
 
+
+# root
 root = CTk.CTk()
 root.title("PsyToolkit Questionnaire Formatter")
-
-# Left frame for text input, label, and format button
+im = Image.open("./images/brain.png")
+photo = ImageTk.PhotoImage(im)
+root.wm_iconphoto(True, photo)
 left_frame = CTk.CTkFrame(root)
-left_frame.grid(row=0, column=0, padx=10, pady=10)
+left_frame.grid(row=2, column=0, padx=10, pady=10)
+right_frame = CTk.CTkFrame(root)
+right_frame.grid(row=2, column=1, padx=10, pady=10, sticky="n")
 
+# Options checkboxes
+random = tkinter.BooleanVar()
+link = tkinter.BooleanVar()
+free = tkinter.BooleanVar()
+requied = tkinter.BooleanVar()
+sep = tkinter.BooleanVar()
+qf = tkinter.BooleanVar()
+
+random_button = CTk.CTkCheckBox(
+    right_frame, text="Show items in a random order", variable=random)
+link_button = CTk.CTkCheckBox(
+    right_frame, text="Link to previous question (typically not necessary)", variable=link)
+free_button = CTk.CTkCheckBox(
+    right_frame, text="Do not require participant to select any item", variable=free)
+requied_button = CTk.CTkCheckBox(
+    right_frame, text="Require participant to select any item", variable=requied)
+sep_button = CTk.CTkCheckBox(
+    right_frame, text="Save data anonymously", variable=sep)
+qf_button = CTk.CTkCheckBox(
+    right_frame, text="Show question text above image/video (if any)", variable=qf)
+
+options_buttons = ["random_button", "link_button",
+                   "free_button", "requied_button", "sep_button", "qf_button"]
+
+
+def clean_options():
+    '''
+    clears options checkboxes
+    '''
+    for widget in options_buttons:
+        globals()[widget].pack_forget()
+
+
+def show_options(question_type_selected):
+    '''
+    shows options checkboxes based on question type
+    '''
+    clean_options()
+    for widget in options_buttons:
+        globals()[widget].pack(pady=5, anchor="w")
+    if question_type_selected == "radio":
+        requied_button.pack_forget()
+    elif question_type_selected == "check":
+        free_button.pack_forget()
+        requied_button.configure(command=requied_borders)
+
+min_label = CTk.CTkLabel(right_frame, text="Minimum requied:")
+min_entry = CTk.CTkEntry(right_frame, width=300)
+max_label = CTk.CTkLabel(right_frame, text="Maximum requied:")
+max_entry = CTk.CTkEntry(right_frame, width=300)
+
+def requied_borders():
+    '''
+    minimum and maximum textboxes for o: requied
+    '''
+    if question_type.get() == "check" and requied.get():
+        min_label.pack()
+        min_entry.pack()
+        max_label.pack()
+        max_entry.pack()
+    else:
+        min_label.pack_forget()
+        min_entry.pack_forget()
+        max_label.pack_forget()
+        max_entry.pack_forget()
+
+# Dropdown menu for selecting type of input
+question_type = CTk.StringVar(value="radio")
+input_label = CTk.CTkLabel(root, text="Question type:")
+input_label.grid(row=0, column=0, pady=(5, 0), padx=10, sticky='w')
+input_menu = CTk.CTkOptionMenu(
+    root, values=["radio", "check"], variable=question_type, command=show_options)
+input_menu.grid(row=1, column=0, padx=10, columnspan=2, sticky='ew')
+
+# Left frame
 input_label = CTk.CTkLabel(left_frame, text="Enter text:")
 input_label.pack()
 
@@ -83,47 +172,21 @@ copy_button = CTk.CTkButton(
     left_frame, text="Copy to Clipboard", command=copy_to_clipboard)
 copy_button.pack(side="bottom", pady=5)
 
-# Right frame for scale entries and options
-right_frame = CTk.CTkFrame(root)
-right_frame.grid(row=0, column=1, padx=10, pady=10, sticky="n")
-
-# Checkbox for random answer order
-random = tkinter.BooleanVar()
-random_button = CTk.CTkCheckBox(
-    right_frame, text="Show items in a random order", variable=random)
-random_button.pack(pady=5, anchor="w")
-
-link = tkinter.BooleanVar()
-link_button = CTk.CTkCheckBox(
-    right_frame, text="Link to previous question (typically not necessary)", variable=link)
-link_button.pack(pady=5, anchor="w")
-
-free = tkinter.BooleanVar()
-free_button = CTk.CTkCheckBox(
-    right_frame, text="Do not require participant to select any item", variable=free)
-free_button.pack(pady=5, anchor="w")
-
-sep = tkinter.BooleanVar()
-sep_button = CTk.CTkCheckBox(
-    right_frame, text="Save data anonymously", variable=sep)
-sep_button.pack(pady=5, anchor="w")
-
-qf = tkinter.BooleanVar()
-qf_button = CTk.CTkCheckBox(
-    right_frame, text="Show question text above image/video (if any)", variable=qf)
-qf_button.pack(pady=5, anchor="w")
-
+# Scale
 scale_label = CTk.CTkLabel(right_frame, text="Enter scale values:")
 scale_label.pack()
 
 scale_text = CTk.CTkTextbox(right_frame)
 scale_text.pack()
 
-button_label = CTk.CTkLabel(right_frame, text="Non-standard continue button text:")
+button_label = CTk.CTkLabel(
+    right_frame, text="Non-standard continue button text:")
 button_label.pack()
 
 button_input = CTk.CTkEntry(right_frame, width=300)
 button_input.pack()
+
+show_options(question_type.get())
 
 root.resizable(False, False)
 

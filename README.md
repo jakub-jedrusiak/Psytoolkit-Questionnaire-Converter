@@ -20,5 +20,16 @@ Use [releases](https://github.com/jakub-jedrusiak/Psytoolkit-Questionnaire-Forma
 
 ## To-do
 
-- [ ] Other question types than radio.
 - [X] Options like random, requied etc.
+- [X] radio
+- [ ] drop
+- [X] check
+- [ ] scale
+- [ ] range
+- [ ] textline
+- [ ] textbox
+- [ ] rank
+- [ ] images
+- [ ] sounds
+- [ ] videos
+- [ ] time options
