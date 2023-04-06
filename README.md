@@ -1,4 +1,4 @@
-# Psytoolkit Questionnaire Formatter <img src="images/brain.ico" align="right" height="138" alt="" />
+# Psytoolkit Questionnaire Formatter <img src="images/brain.png" align="right" height="138" alt="" />
 
 <!-- badges: start -->
 
