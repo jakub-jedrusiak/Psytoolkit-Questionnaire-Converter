@@ -32,7 +32,7 @@ Use [releases](https://github.com/jakub-jedrusiak/Psytoolkit-Questionnaire-Forma
 
 - [X] Options like random, requied etc.
 - [X] radio
-- [ ] drop
+- [X] drop
 - [X] check
 - [ ] scale
 - [ ] range
@@ -45,4 +45,5 @@ Use [releases](https://github.com/jakub-jedrusiak/Psytoolkit-Questionnaire-Forma
 - [ ] time options
 
 ## Note
+
 This is a community tool. I'm not a PsyToolkit developer nor author. That would be prof. Gijsbert Stoet.

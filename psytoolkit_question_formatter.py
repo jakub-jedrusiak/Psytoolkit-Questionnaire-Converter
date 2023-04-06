@@ -8,6 +8,8 @@ from PIL import Image, ImageTk
 
 CTk.set_appearance_mode("dark")  # Modes: system (default), light, dark
 
+type_group_free = ["radio", "drop"] # o: free
+type_group_requied = ["check"] # o: requied
 
 def format_text():
     '''
@@ -27,14 +29,14 @@ def format_text():
             output += "o: random\n"
         if link.get():
             output += "o: link\n"
-        if q_type == "radio" and free.get():
+        if q_type in type_group_free and free.get():
             output += "o: free\n"
-        if q_type == "check" and requied.get():
+        if q_type in type_group_requied and requied.get():
             output += "o: requied"
             if min_entry.get() != "":
-                output += f" {min_entry.get()}"
+                output += f" {min_entry.get().strip()}"
                 if max_entry.get() != "":
-                    output += f" {max_entry.get()}"
+                    output += f" {max_entry.get().strip()}"
         output += "\n"
         if sep.get():
             output += "o: sep\n"
@@ -112,9 +114,9 @@ def show_options(question_type_selected):
     clean_options()
     for widget in options_buttons:
         globals()[widget].pack(pady=5, anchor="w")
-    if question_type_selected == "radio":
+    if question_type_selected in type_group_free:
         requied_button.pack_forget()
-    elif question_type_selected == "check":
+    elif question_type_selected in type_group_requied:
         free_button.pack_forget()
         requied_button.configure(command=requied_borders)
 
@@ -127,7 +129,7 @@ def requied_borders():
     '''
     minimum and maximum textboxes for o: requied
     '''
-    if question_type.get() == "check" and requied.get():
+    if question_type.get() in type_group_requied and requied.get():
         min_label.pack()
         min_entry.pack()
         max_label.pack()
@@ -143,7 +145,7 @@ question_type = CTk.StringVar(value="radio")
 input_label = CTk.CTkLabel(root, text="Question type:")
 input_label.grid(row=0, column=0, pady=(5, 0), padx=10, sticky='w')
 input_menu = CTk.CTkOptionMenu(
-    root, values=["radio", "check"], variable=question_type, command=show_options)
+    root, values=type_group_free+type_group_requied, variable=question_type, command=show_options)
 input_menu.grid(row=1, column=0, padx=10, columnspan=2, sticky='ew')
 
 # Left frame
