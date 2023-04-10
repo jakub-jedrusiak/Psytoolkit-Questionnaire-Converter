@@ -32,9 +32,14 @@ pip install pillow
 
 Use [releases](https://github.com/jakub-jedrusiak/Psytoolkit-Questionnaire-Formatter/releases) to download the current .exe file. Known problems include a need to click on something multiple times before it starts to work.
 
+## Scoring
+
+This tool allows for setting scores for the questionnaire's items as well as **reversing scores for selected items**. To add scores to your scale, use appropriate buttons. You can use settings to change scoring convention (incremental, decremental or fixed for manually adding a the scoring without having to write `{score=X}` each time). To reverse the scale for an item, add an asterisk `*` at the end of the item. Reversing uses the input order and ignores items that are not scored.
+
 ## To-do
 
 - [X] Options like random, requied etc.
+- [X] Scoring
 - [X] radio
 - [X] drop
 - [X] check

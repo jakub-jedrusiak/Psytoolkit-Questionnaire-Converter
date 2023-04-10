@@ -4,15 +4,16 @@ A simple formatter for making questionaires in PsyToolbox faster by Jakub Jędru
 
 import sys
 import os
+from re import match, sub
 import tkinter
 import customtkinter as CTk
-from PIL import Image, ImageTk
-
+from PIL import ImageTk
 
 CTk.set_appearance_mode("dark")  # Modes: system (default), light, dark
 
-type_group_free = ["radio", "drop"] # o: free
-type_group_requied = ["check"] # o: requied
+type_group_free = ["radio", "drop"]  # o: free
+type_group_requied = ["check"]  # o: requied
+
 
 def format_text():
     '''
@@ -26,8 +27,17 @@ def format_text():
     q_type = question_type.get()
     output = ""
     count = 1  # for labels
+    # Get scores list
+    scores = []
+    for scale_entry in answers:
+        is_scored = match(r"{score=(\d+)}\s*(.*)", scale_entry)
+        if is_scored:
+            scores.append(int(is_scored.group(1)))
+
     for line in lines:
         output += f"l: {label_text}_{count}\nt: {q_type}\n"
+
+        # Options
         if random.get():
             output += "o: random\n"
         if link.get():
@@ -40,16 +50,39 @@ def format_text():
                 output += f" {min_entry.get().strip()}"
                 if max_entry.get() != "":
                     output += f" {max_entry.get().strip()}"
-        output += "\n"
+            output += "\n"
         if sep.get():
             output += "o: sep\n"
         if qf.get():
             output += "o: qf\n"
         if button_input.get().strip() != "":
             output += f"b: {button_input.get().strip()}\n"
+
+        # check if the question has asterisk at the end
+        if line.endswith("*"):
+            current_scores = list(reversed(scores))
+            reversed_scoring = True
+            line = line[:-1]
+        else:
+            reversed_scoring = False
+
+        # Question
         output += f"q: {line}\n"
+
+        # Answers
+        score_number = 0
         for scale_entry in answers:
-            output += f"- {scale_entry}\n"
+            if reversed_scoring:
+                is_scored = match(r"{score=\d+}\s*(.*)", scale_entry)
+                if is_scored:
+                    answer = is_scored.group(1)
+                    score = current_scores[score_number] # inserts next element from scores list
+                    output += f"- {{score={score}}} {answer}\n"
+                    score_number += 1
+                else:
+                    output += f"- {scale_entry}\n"
+            else:
+                output += f"- {scale_entry}\n"
         output += "\n"
         count += 1
     output_text.delete("1.0", "end")
@@ -65,6 +98,7 @@ def copy_to_clipboard():
         root.clipboard_clear()
         root.clipboard_append(formatted_text)
 
+
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
@@ -74,6 +108,7 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
+
 
 # root
 root = CTk.CTk()
@@ -131,10 +166,12 @@ def show_options(question_type_selected):
         free_button.pack_forget()
         requied_button.configure(command=requied_borders)
 
+
 min_label = CTk.CTkLabel(right_frame, text="Minimum requied:")
 min_entry = CTk.CTkEntry(right_frame, width=300)
 max_label = CTk.CTkLabel(right_frame, text="Maximum requied:")
 max_entry = CTk.CTkEntry(right_frame, width=300)
+
 
 def requied_borders():
     '''
@@ -150,6 +187,7 @@ def requied_borders():
         min_entry.pack_forget()
         max_label.pack_forget()
         max_entry.pack_forget()
+
 
 # Dropdown menu for selecting type of input
 question_type = CTk.StringVar(value="radio")
@@ -191,6 +229,95 @@ scale_label.pack()
 
 scale_text = CTk.CTkTextbox(right_frame)
 scale_text.pack()
+
+# Scores
+scoring_scheme = CTk.StringVar(value="incremental")
+default_score = CTk.StringVar(value="1")
+preserve_scores = CTk.BooleanVar()
+
+
+def add_scores():
+    '''
+    Adds scores to scales, incremental by default, preserves existing.
+    '''
+    if not preserve_scores.get():
+        remove_scores()
+    text = scale_text.get("1.0", "end").strip()
+    lines = text.split("\n")
+    output = ""
+    count = int(default_score.get())-1
+    if scoring_scheme.get() == "decremental":
+        count += len(lines) + 1
+    for line in lines:
+        if scoring_scheme.get() == "incremental":
+            count += 1
+        elif scoring_scheme.get() == "decremental":
+            count -= 1
+        if match(r"^{score *= *\d+} *", line):  # preserve existing
+            output += f"{line}\n"
+        else:
+            output += f"{{score={count}}} {line}\n"
+    scale_text.delete("1.0", "end")
+    scale_text.insert("1.0", output.strip())
+
+
+def remove_scores():
+    '''
+    Removes scores from scale.
+    '''
+    text = scale_text.get("1.0", "end").strip()
+    lines = text.split("\n")
+    output = ""
+    for line in lines:
+        output += sub(r"^\s*{score *= *\d+} *", "", line)
+        output += "\n"
+    scale_text.delete("1.0", "end")
+    scale_text.insert("1.0", output.strip())
+
+
+def score_options():
+    '''
+    Opens Score Options window to change defaults
+    '''
+    score_options_window = CTk.CTkToplevel(root)
+    score_options_window.title("Score Options")
+    score_options_window.geometry("300x210")
+    score_options_window.resizable(False, False)
+
+    scoring_scheme_label = CTk.CTkLabel(
+        score_options_window, text="Scoring scheme:")
+    scoring_scheme_label.pack()
+    scoring_scheme_dropdown = CTk.CTkOptionMenu(
+        score_options_window, values=["incremental", "decremental", "fixed"], variable=scoring_scheme)
+    scoring_scheme_dropdown.pack(pady=(0, 10))
+
+    default_score_label = CTk.CTkLabel(
+        score_options_window, text="Deafult score (to start from or end on):")
+    default_score_label.pack()
+    default_score_entery = CTk.CTkEntry(
+        score_options_window, textvariable=default_score)
+    default_score_entery.pack(pady=(0, 10))
+
+    preserve_scores_checkbox = CTk.CTkCheckBox(
+        score_options_window, text="Preserve existing scores when adding", variable=preserve_scores)
+    preserve_scores_checkbox.pack(pady=(0, 10))
+
+    scoring_note = CTk.CTkLabel(
+        score_options_window, text="Note: add an asterisk * at the end\nof an item to invert scoring for the item.")
+    scoring_note.pack()
+
+
+score_frame = CTk.CTkFrame(right_frame)
+score_frame.pack(pady=10)
+add_scores_button = CTk.CTkButton(
+    score_frame, text="Add scores", command=add_scores)
+score_options_button = CTk.CTkButton(
+    score_frame, text="Score options", command=score_options)
+remove_scores_button = CTk.CTkButton(
+    score_frame, text="Remove scores", command=remove_scores)
+remove_scores_button.pack(side=tkinter.LEFT, padx=(0, 5))
+add_scores_button.pack(side=tkinter.RIGHT, padx=(5, 0))
+score_options_button.pack()
 
 button_label = CTk.CTkLabel(
     right_frame, text="Non-standard continue button text:")
