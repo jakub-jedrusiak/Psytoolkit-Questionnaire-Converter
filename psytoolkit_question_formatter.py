@@ -110,6 +110,24 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+def select_all(event):
+    '''
+    Selects all text in a text widget
+    '''
+    event.widget.tag_add(tkinter.SEL, "1.0", tkinter.END)
+    event.widget.mark_set(tkinter.INSERT, "1.0")
+    event.widget.see(tkinter.INSERT)
+    return 'break'
+
+def bind_all_text_widgets(parent):
+    '''
+    Binds select all shortcut to ctrl+a in all text widgets
+    '''
+    for widget in parent.winfo_children():
+        if isinstance(widget, CTk.CTkTextbox):
+            widget.bind("<Control-a>", select_all)
+        else:
+            bind_all_text_widgets(widget)
 
 # root
 root = CTk.CTk()
@@ -330,5 +348,6 @@ button_input.pack()
 show_options(question_type.get())
 
 root.resizable(False, False)
+bind_all_text_widgets(root)
 
 root.mainloop()
