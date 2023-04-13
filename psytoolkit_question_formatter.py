@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
 A simple formatter for making questionaires in PsyToolbox faster by Jakub Jędrusiak.
 '''
