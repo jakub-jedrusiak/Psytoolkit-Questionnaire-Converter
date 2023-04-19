@@ -391,4 +391,6 @@ show_options(question_type.get())  # show options for given question type
 
 bind_all_text_widgets(root)  # apply ctrl+a to all text widgets
 
+root.minsize(root.winfo_width()+15, root.winfo_height())
+
 root.mainloop()
