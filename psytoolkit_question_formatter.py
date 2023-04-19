@@ -14,6 +14,7 @@ CTk.set_appearance_mode("dark")  # Modes: system (default), light, dark
 
 type_group_free = ["radio", "drop"]  # o: free
 type_group_requied = ["check"]  # o: requied
+type_group_info = ["info"]  # o: end
 
 
 def format_text():
@@ -43,6 +44,8 @@ def format_text():
             output += "o: random\n"
         if link.get():
             output += "o: link\n"
+        if q_type in type_group_info and end.get():
+            output += "o: end\n"
         if q_type in type_group_free and free.get():
             output += "o: free\n"
         if q_type in type_group_requied and requied.get():
@@ -72,19 +75,20 @@ def format_text():
 
         # Answers
         score_number = 0
-        for scale_entry in answers:
-            if reversed_scoring:
-                is_scored = match(r"{score=\d+}\s*(.*)", scale_entry)
-                if is_scored:
-                    answer = is_scored.group(1)
-                    # inserts next element from scores list
-                    score = current_scores[score_number]
-                    output += f"- {{score={score}}} {answer}\n"
-                    score_number += 1
+        if len(answers) > 1:
+            for scale_entry in answers:
+                if reversed_scoring:
+                    is_scored = match(r"{score=\d+}\s*(.*)", scale_entry)
+                    if is_scored:
+                        answer = is_scored.group(1)
+                        # inserts next element from scores list
+                        score = current_scores[score_number]
+                        output += f"- {{score={score}}} {answer}\n"
+                        score_number += 1
+                    else:
+                        output += f"- {scale_entry}\n"
                 else:
                     output += f"- {scale_entry}\n"
-            else:
-                output += f"- {scale_entry}\n"
         output += "\n"
         count += 1
     output_text.delete("1.0", "end")
@@ -147,14 +151,18 @@ right_frame.grid(row=2, column=1, padx=10, pady=10, sticky="n")
 
 # Options checkboxes
 random = tkinter.BooleanVar()
+end = tkinter.BooleanVar()
 link = tkinter.BooleanVar()
 free = tkinter.BooleanVar()
 requied = tkinter.BooleanVar()
 sep = tkinter.BooleanVar()
 qf = tkinter.BooleanVar()
+checkboxes_vars = [random, end, link, free, requied, sep, qf]
 
 random_button = CTk.CTkCheckBox(
     right_frame, text="Show items in a random order", variable=random)
+end_button = CTk.CTkCheckBox(
+    master=right_frame, text="End questionnaire after this question", variable=end)
 link_button = CTk.CTkCheckBox(
     right_frame, text="Link to previous question (typically not necessary)", variable=link)
 free_button = CTk.CTkCheckBox(
@@ -166,7 +174,7 @@ sep_button = CTk.CTkCheckBox(
 qf_button = CTk.CTkCheckBox(
     right_frame, text="Show question text above image/video (if any)", variable=qf)
 
-options_buttons = ["random_button", "link_button",
+options_buttons = ["random_button", "end_button", "link_button",
                    "free_button", "requied_button", "sep_button", "qf_button"]
 
 
@@ -176,6 +184,8 @@ def clean_options():
     '''
     for widget in options_buttons:
         globals()[widget].pack_forget()
+    for widget in checkboxes_vars:
+        widget.set(False)
 
 
 def show_options(question_type_selected):
@@ -187,9 +197,16 @@ def show_options(question_type_selected):
         globals()[widget].pack(pady=5, anchor="w")
     if question_type_selected in type_group_free:
         requied_button.pack_forget()
+        end_button.pack_forget()
     elif question_type_selected in type_group_requied:
         free_button.pack_forget()
         requied_button.configure(command=requied_borders)
+        end_button.pack_forget()
+    elif question_type_selected in type_group_info:
+        random_button.pack_forget()
+        free_button.pack_forget()
+        requied_button.pack_forget()
+        sep_button.pack_forget()
 
 
 min_label = CTk.CTkLabel(right_frame, text="Minimum requied:")
@@ -218,7 +235,8 @@ def requied_borders():
 question_type = CTk.StringVar(value="radio")
 input_label = CTk.CTkLabel(root, text="Question type:")
 input_menu = CTk.CTkOptionMenu(
-    root, values=type_group_free+type_group_requied, variable=question_type, command=show_options)
+    root, values=type_group_free+type_group_requied+type_group_info,
+    variable=question_type, command=show_options)
 input_label.grid(row=0, column=0, pady=(5, 0), padx=10, sticky='w')
 input_menu.grid(row=1, column=0, padx=10, columnspan=2, sticky='ew')
 
@@ -255,6 +273,7 @@ scoring_scheme = CTk.StringVar(value="incremental")
 default_score = CTk.StringVar(value="1")
 preserve_scores = CTk.BooleanVar()
 
+
 def add_scores():
     '''
     Adds scores to scales, incremental by default, preserves existing.
@@ -279,6 +298,7 @@ def add_scores():
     scale_text.delete("1.0", "end")
     scale_text.insert("1.0", output.strip())
 
+
 def remove_scores():
     '''
     Removes scores from scale.
@@ -291,6 +311,7 @@ def remove_scores():
         output += "\n"
     scale_text.delete("1.0", "end")
     scale_text.insert("1.0", output.strip())
+
 
 def score_options():
     '''
@@ -321,6 +342,7 @@ def score_options():
     preserve_scores_checkbox.pack(pady=(0, 10))
     scoring_note.pack()
 
+
 score_frame = CTk.CTkFrame(right_frame)
 remove_scores_button = CTk.CTkButton(
     score_frame, text="Remove scores", command=remove_scores)
@@ -343,9 +365,9 @@ button_label.pack()
 button_input.pack()
 
 # Main window
-show_options(question_type.get()) # show options for given question type
+show_options(question_type.get())  # show options for given question type
 
-root.resizable(False, False) # disable resizing
-bind_all_text_widgets(root) # apply ctrl+a to all text widgets
+root.resizable(False, False)  # disable resizing
+bind_all_text_widgets(root)  # apply ctrl+a to all text widgets
 
 root.mainloop()
