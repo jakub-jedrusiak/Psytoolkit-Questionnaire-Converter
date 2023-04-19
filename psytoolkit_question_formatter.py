@@ -174,7 +174,7 @@ numbers = tkinter.BooleanVar()
 checkboxes_vars = [random, end, link, free, requie, sep, qf, numbers]
 
 random_button = CTk.CTkCheckBox(
-    options_frame, text="Show items in a random order", variable=random)
+    options_frame, text="Show items in a random order", variable=random, )
 end_button = CTk.CTkCheckBox(
     options_frame, text="End questionnaire after this question", variable=end)
 link_button = CTk.CTkCheckBox(
@@ -199,9 +199,8 @@ def clean_options():
     clears options checkboxes
     '''
     for widget in options_buttons:
+        globals()[widget].deselect()
         globals()[widget].pack_forget()
-    for widget in checkboxes_vars:
-        widget.set(False)
 
 
 def show_options(question_type_selected):
