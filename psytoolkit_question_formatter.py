@@ -13,7 +13,7 @@ from PIL import ImageTk
 CTk.set_appearance_mode("dark")  # Modes: system (default), light, dark
 
 type_group_free = ["radio", "drop"]  # o: free
-type_group_requied = ["check"]  # o: requied
+type_group_requie = ["check"]  # o: requie
 type_group_info = ["info"]  # o: end
 
 
@@ -48,8 +48,8 @@ def format_text():
             output += "o: end\n"
         if q_type in type_group_free and free.get():
             output += "o: free\n"
-        if q_type in type_group_requied and requied.get():
-            output += "o: requied"
+        if q_type in type_group_requie and requie.get():
+            output += "o: requie"
             if min_entry.get() != "":
                 output += f" {min_entry.get().strip()}"
                 if max_entry.get() != "":
@@ -154,10 +154,10 @@ random = tkinter.BooleanVar()
 end = tkinter.BooleanVar()
 link = tkinter.BooleanVar()
 free = tkinter.BooleanVar()
-requied = tkinter.BooleanVar()
+requie = tkinter.BooleanVar()
 sep = tkinter.BooleanVar()
 qf = tkinter.BooleanVar()
-checkboxes_vars = [random, end, link, free, requied, sep, qf]
+checkboxes_vars = [random, end, link, free, requie, sep, qf]
 
 random_button = CTk.CTkCheckBox(
     right_frame, text="Show items in a random order", variable=random)
@@ -167,15 +167,15 @@ link_button = CTk.CTkCheckBox(
     right_frame, text="Link to previous question (typically not necessary)", variable=link)
 free_button = CTk.CTkCheckBox(
     right_frame, text="Do not require participant to select any item", variable=free)
-requied_button = CTk.CTkCheckBox(
-    right_frame, text="Require participant to select any item", variable=requied)
+requie_button = CTk.CTkCheckBox(
+    right_frame, text="Require participant to select any item", variable=requie)
 sep_button = CTk.CTkCheckBox(
     right_frame, text="Save data anonymously", variable=sep)
 qf_button = CTk.CTkCheckBox(
     right_frame, text="Show question text above image/video (if any)", variable=qf)
 
 options_buttons = ["random_button", "end_button", "link_button",
-                   "free_button", "requied_button", "sep_button", "qf_button"]
+                   "free_button", "requie_button", "sep_button", "qf_button"]
 
 
 def clean_options():
@@ -196,30 +196,30 @@ def show_options(question_type_selected):
     for widget in options_buttons:
         globals()[widget].pack(pady=5, anchor="w")
     if question_type_selected in type_group_free:
-        requied_button.pack_forget()
+        requie_button.pack_forget()
         end_button.pack_forget()
-    elif question_type_selected in type_group_requied:
+    elif question_type_selected in type_group_requie:
         free_button.pack_forget()
-        requied_button.configure(command=requied_borders)
+        requie_button.configure(command=requie_borders)
         end_button.pack_forget()
     elif question_type_selected in type_group_info:
         random_button.pack_forget()
         free_button.pack_forget()
-        requied_button.pack_forget()
+        requie_button.pack_forget()
         sep_button.pack_forget()
 
 
-min_label = CTk.CTkLabel(right_frame, text="Minimum requied:")
+min_label = CTk.CTkLabel(right_frame, text="Minimum requie:")
 min_entry = CTk.CTkEntry(right_frame, width=300)
-max_label = CTk.CTkLabel(right_frame, text="Maximum requied:")
+max_label = CTk.CTkLabel(right_frame, text="Maximum requie:")
 max_entry = CTk.CTkEntry(right_frame, width=300)
 
 
-def requied_borders():
+def requie_borders():
     '''
-    minimum and maximum textboxes for o: requied
+    minimum and maximum textboxes for o: requie
     '''
-    if question_type.get() in type_group_requied and requied.get():
+    if question_type.get() in type_group_requie and requie.get():
         min_label.pack()
         min_entry.pack()
         max_label.pack()
@@ -235,7 +235,7 @@ def requied_borders():
 question_type = CTk.StringVar(value="radio")
 input_label = CTk.CTkLabel(root, text="Question type:")
 input_menu = CTk.CTkOptionMenu(
-    root, values=type_group_free+type_group_requied+type_group_info,
+    root, values=type_group_free+type_group_requie+type_group_info,
     variable=question_type, command=show_options)
 input_label.grid(row=0, column=0, pady=(5, 0), padx=10, sticky='w')
 input_menu.grid(row=1, column=0, padx=10, columnspan=2, sticky='ew')
