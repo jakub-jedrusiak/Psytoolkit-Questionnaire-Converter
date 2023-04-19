@@ -77,7 +77,8 @@ def format_text():
                 is_scored = match(r"{score=\d+}\s*(.*)", scale_entry)
                 if is_scored:
                     answer = is_scored.group(1)
-                    score = current_scores[score_number] # inserts next element from scores list
+                    # inserts next element from scores list
+                    score = current_scores[score_number]
                     output += f"- {{score={score}}} {answer}\n"
                     score_number += 1
                 else:
@@ -110,6 +111,7 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+
 def select_all(event):
     '''
     Selects all text in a text widget
@@ -118,6 +120,7 @@ def select_all(event):
     event.widget.mark_set(tkinter.INSERT, "1.0")
     event.widget.see(tkinter.INSERT)
     return 'break'
+
 
 def bind_all_text_widgets(parent):
     '''
@@ -129,14 +132,17 @@ def bind_all_text_widgets(parent):
         else:
             bind_all_text_widgets(widget)
 
+
 # root
 root = CTk.CTk()
 root.title("PsyToolkit Questionnaire Formatter")
 photo = ImageTk.PhotoImage(file=resource_path("./images/brain.png"))
 root.wm_iconphoto(True, photo)
+
 left_frame = CTk.CTkFrame(root)
-left_frame.grid(row=2, column=0, padx=10, pady=10)
 right_frame = CTk.CTkFrame(root)
+
+left_frame.grid(row=2, column=0, padx=10, pady=10)
 right_frame.grid(row=2, column=1, padx=10, pady=10, sticky="n")
 
 # Options checkboxes
@@ -211,49 +217,43 @@ def requied_borders():
 # Dropdown menu for selecting type of input
 question_type = CTk.StringVar(value="radio")
 input_label = CTk.CTkLabel(root, text="Question type:")
-input_label.grid(row=0, column=0, pady=(5, 0), padx=10, sticky='w')
 input_menu = CTk.CTkOptionMenu(
     root, values=type_group_free+type_group_requied, variable=question_type, command=show_options)
+input_label.grid(row=0, column=0, pady=(5, 0), padx=10, sticky='w')
 input_menu.grid(row=1, column=0, padx=10, columnspan=2, sticky='ew')
 
 # Left frame
 input_label = CTk.CTkLabel(left_frame, text="Enter text:")
-input_label.pack()
-
 input_text = CTk.CTkTextbox(left_frame, height=250, width=600)
-input_text.pack()
-
 label_label = CTk.CTkLabel(left_frame, text="Enter label:")
-label_label.pack()
-
 label_input = CTk.CTkEntry(left_frame, width=300)
-label_input.pack()
-
 format_button = CTk.CTkButton(left_frame, text="Format", command=format_text)
-format_button.pack(pady=10)
-
 output_label = CTk.CTkLabel(left_frame, text="Formatted text:")
-output_label.pack()
-
 output_text = CTk.CTkTextbox(left_frame, height=250, width=600)
-output_text.pack()
-
 copy_button = CTk.CTkButton(
     left_frame, text="Copy to Clipboard", command=copy_to_clipboard)
+
+input_label.pack()
+input_text.pack()
+label_label.pack()
+label_input.pack()
+format_button.pack(pady=10)
+output_label.pack()
+output_text.pack()
 copy_button.pack(side="bottom", pady=5)
 
+# Right frame
 # Scale
-scale_label = CTk.CTkLabel(right_frame, text="Enter scale values:")
-scale_label.pack()
-
 scale_text = CTk.CTkTextbox(right_frame)
+scale_label = CTk.CTkLabel(right_frame, text="Enter scale values:")
+
+scale_label.pack()
 scale_text.pack()
 
 # Scores
 scoring_scheme = CTk.StringVar(value="incremental")
 default_score = CTk.StringVar(value="1")
 preserve_scores = CTk.BooleanVar()
-
 
 def add_scores():
     '''
@@ -279,7 +279,6 @@ def add_scores():
     scale_text.delete("1.0", "end")
     scale_text.insert("1.0", output.strip())
 
-
 def remove_scores():
     '''
     Removes scores from scale.
@@ -293,7 +292,6 @@ def remove_scores():
     scale_text.delete("1.0", "end")
     scale_text.insert("1.0", output.strip())
 
-
 def score_options():
     '''
     Opens Score Options window to change defaults
@@ -305,49 +303,49 @@ def score_options():
 
     scoring_scheme_label = CTk.CTkLabel(
         score_options_window, text="Scoring scheme:")
-    scoring_scheme_label.pack()
     scoring_scheme_dropdown = CTk.CTkOptionMenu(
         score_options_window, values=["incremental", "decremental", "fixed"], variable=scoring_scheme)
-    scoring_scheme_dropdown.pack(pady=(0, 10))
-
     default_score_label = CTk.CTkLabel(
         score_options_window, text="Deafult score (to start from or end on):")
-    default_score_label.pack()
     default_score_entery = CTk.CTkEntry(
         score_options_window, textvariable=default_score)
-    default_score_entery.pack(pady=(0, 10))
-
     preserve_scores_checkbox = CTk.CTkCheckBox(
         score_options_window, text="Preserve existing scores when adding", variable=preserve_scores)
-    preserve_scores_checkbox.pack(pady=(0, 10))
-
     scoring_note = CTk.CTkLabel(
         score_options_window, text="Note: add an asterisk * at the end\nof an item to invert scoring for the item.")
+
+    scoring_scheme_label.pack()
+    scoring_scheme_dropdown.pack(pady=(0, 10))
+    default_score_label.pack()
+    default_score_entery.pack(pady=(0, 10))
+    preserve_scores_checkbox.pack(pady=(0, 10))
     scoring_note.pack()
 
-
 score_frame = CTk.CTkFrame(right_frame)
-score_frame.pack(pady=10)
-add_scores_button = CTk.CTkButton(
-    score_frame, text="Add scores", command=add_scores)
-score_options_button = CTk.CTkButton(
-    score_frame, text="Score options", command=score_options)
 remove_scores_button = CTk.CTkButton(
     score_frame, text="Remove scores", command=remove_scores)
-remove_scores_button.pack(side=tkinter.LEFT, padx=(0, 5))
-add_scores_button.pack(side=tkinter.RIGHT, padx=(5, 0))
-score_options_button.pack()
+score_options_button = CTk.CTkButton(
+    score_frame, text="Score options", command=score_options)
+add_scores_button = CTk.CTkButton(
+    score_frame, text="Add scores", command=add_scores)
 
+score_frame.pack(pady=10)
+remove_scores_button.pack(side=tkinter.LEFT)
+score_options_button.pack(side=tkinter.LEFT, padx=(5, 5))
+add_scores_button.pack(side=tkinter.LEFT)
+
+# Non-standard continue button
 button_label = CTk.CTkLabel(
     right_frame, text="Non-standard continue button text:")
-button_label.pack()
-
 button_input = CTk.CTkEntry(right_frame, width=300)
+
+button_label.pack()
 button_input.pack()
 
-show_options(question_type.get())
+# Main window
+show_options(question_type.get()) # show options for given question type
 
-root.resizable(False, False)
-bind_all_text_widgets(root)
+root.resizable(False, False) # disable resizing
+bind_all_text_widgets(root) # apply ctrl+a to all text widgets
 
 root.mainloop()
