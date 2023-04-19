@@ -47,7 +47,8 @@ This tool allows for setting scores for the questionnaire's items as well as **r
 - [ ] range
 - [ ] textline
 - [ ] textbox
-- [ ] rank
+- [X] rank
+- [X] info
 - [ ] images
 - [ ] sounds
 - [ ] videos
