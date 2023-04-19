@@ -38,6 +38,9 @@ def format_text():
             scores.append(int(is_scored.group(1)))
 
     for line in lines:
+        if line in ["----", "page: begin", "page: end"]:
+            output += f"{line}\n\n"
+            continue
         output += f"l: {label_text}_{count}\nt: {q_type}\n"
 
         # Options
