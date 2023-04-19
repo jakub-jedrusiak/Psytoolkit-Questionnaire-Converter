@@ -14,6 +14,7 @@ CTk.set_appearance_mode("dark")  # Modes: system (default), light, dark
 
 type_group_free = ["radio", "drop"]  # o: free
 type_group_requie = ["check"]  # o: requie
+type_group_rank = ["rank"]
 type_group_info = ["info"]  # o: end
 
 
@@ -59,6 +60,8 @@ def format_text():
             output += "o: sep\n"
         if qf.get():
             output += "o: qf\n"
+        if numbers.get():
+            output += "o: numbers\n"
         if button_input.get().strip() != "":
             output += f"b: {button_input.get().strip()}\n"
 
@@ -157,7 +160,8 @@ free = tkinter.BooleanVar()
 requie = tkinter.BooleanVar()
 sep = tkinter.BooleanVar()
 qf = tkinter.BooleanVar()
-checkboxes_vars = [random, end, link, free, requie, sep, qf]
+numbers = tkinter.BooleanVar()
+checkboxes_vars = [random, end, link, free, requie, sep, qf, numbers]
 
 random_button = CTk.CTkCheckBox(
     right_frame, text="Show items in a random order", variable=random)
@@ -173,9 +177,11 @@ sep_button = CTk.CTkCheckBox(
     right_frame, text="Save data anonymously", variable=sep)
 qf_button = CTk.CTkCheckBox(
     right_frame, text="Show question text above image/video (if any)", variable=qf)
+numbers_button = CTk.CTkCheckBox(
+    right_frame, text="Show numbers in front of items", variable=numbers)
 
 options_buttons = ["random_button", "end_button", "link_button",
-                   "free_button", "requie_button", "sep_button", "qf_button"]
+                   "free_button", "requie_button", "sep_button", "qf_button", "numbers_button"]
 
 
 def clean_options():
@@ -196,17 +202,24 @@ def show_options(question_type_selected):
     for widget in options_buttons:
         globals()[widget].pack(pady=5, anchor="w")
     if question_type_selected in type_group_free:
-        requie_button.pack_forget()
         end_button.pack_forget()
+        requie_button.pack_forget()
+        numbers_button.pack_forget()
     elif question_type_selected in type_group_requie:
+        end_button.pack_forget()
         free_button.pack_forget()
         requie_button.configure(command=requie_borders)
+        numbers_button.pack_forget()
+    elif question_type_selected in type_group_rank:
         end_button.pack_forget()
+        free_button.pack_forget()
+        requie_button.pack_forget()
     elif question_type_selected in type_group_info:
         random_button.pack_forget()
         free_button.pack_forget()
         requie_button.pack_forget()
         sep_button.pack_forget()
+        numbers_button.pack_forget()
 
 
 min_label = CTk.CTkLabel(right_frame, text="Minimum requie:")
@@ -235,7 +248,7 @@ def requie_borders():
 question_type = CTk.StringVar(value="radio")
 input_label = CTk.CTkLabel(root, text="Question type:")
 input_menu = CTk.CTkOptionMenu(
-    root, values=type_group_free+type_group_requie+type_group_info,
+    root, values=type_group_free+type_group_requie+type_group_rank+type_group_info,
     variable=question_type, command=show_options)
 input_label.grid(row=0, column=0, pady=(5, 0), padx=10, sticky='w')
 input_menu.grid(row=1, column=0, padx=10, columnspan=2, sticky='ew')
