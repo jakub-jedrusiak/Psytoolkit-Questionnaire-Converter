@@ -151,9 +151,16 @@ root.wm_iconphoto(True, photo)
 
 left_frame = CTk.CTkFrame(root)
 right_frame = CTk.CTkFrame(root)
+options_frame = CTk.CTkFrame(right_frame)
 
-left_frame.grid(row=2, column=0, padx=10, pady=10)
-right_frame.grid(row=2, column=1, padx=10, pady=10, sticky="n")
+left_frame.grid(row=2, column=0, padx=10, pady=10, sticky="nesw")
+right_frame.grid(row=2, column=1, padx=10, pady=10, sticky="new")
+options_frame.pack(padx=10, ipadx=5, pady=10,
+                   anchor="nw", side="bottom", fill="x")
+
+root.rowconfigure(2, weight=1)
+root.columnconfigure(0, weight=2)
+root.columnconfigure(1, weight=1)
 
 # Options checkboxes
 random = tkinter.BooleanVar()
@@ -167,21 +174,21 @@ numbers = tkinter.BooleanVar()
 checkboxes_vars = [random, end, link, free, requie, sep, qf, numbers]
 
 random_button = CTk.CTkCheckBox(
-    right_frame, text="Show items in a random order", variable=random)
+    options_frame, text="Show items in a random order", variable=random)
 end_button = CTk.CTkCheckBox(
-    master=right_frame, text="End questionnaire after this question", variable=end)
+    options_frame, text="End questionnaire after this question", variable=end)
 link_button = CTk.CTkCheckBox(
-    right_frame, text="Link to previous question (typically not necessary)", variable=link)
+    options_frame, text="Link to previous question (typically not necessary)", variable=link)
 free_button = CTk.CTkCheckBox(
-    right_frame, text="Do not require participant to select any item", variable=free)
+    options_frame, text="Do not require participant to select any item", variable=free)
 requie_button = CTk.CTkCheckBox(
-    right_frame, text="Require participant to select any item", variable=requie)
+    options_frame, text="Require participant to select any item", variable=requie)
 sep_button = CTk.CTkCheckBox(
-    right_frame, text="Save data anonymously", variable=sep)
+    options_frame, text="Save data anonymously", variable=sep)
 qf_button = CTk.CTkCheckBox(
-    right_frame, text="Show question text above image/video (if any)", variable=qf)
+    options_frame, text="Show question text above image/video (if any)", variable=qf)
 numbers_button = CTk.CTkCheckBox(
-    right_frame, text="Show numbers in front of items", variable=numbers)
+    options_frame, text="Show numbers in front of items", variable=numbers)
 
 options_buttons = ["random_button", "end_button", "link_button",
                    "free_button", "requie_button", "sep_button", "qf_button", "numbers_button"]
@@ -225,10 +232,10 @@ def show_options(question_type_selected):
         numbers_button.pack_forget()
 
 
-min_label = CTk.CTkLabel(right_frame, text="Minimum requie:")
-min_entry = CTk.CTkEntry(right_frame, width=300)
-max_label = CTk.CTkLabel(right_frame, text="Maximum requie:")
-max_entry = CTk.CTkEntry(right_frame, width=300)
+min_label = CTk.CTkLabel(options_frame, text="Minimum requied:")
+max_label = CTk.CTkLabel(options_frame, text="Maximum requied:")
+max_entry = CTk.CTkEntry(options_frame, width=300)
+min_entry = CTk.CTkEntry(options_frame, width=300)
 
 
 def requie_borders():
@@ -258,22 +265,22 @@ input_menu.grid(row=1, column=0, padx=10, columnspan=2, sticky='ew')
 
 # Left frame
 input_label = CTk.CTkLabel(left_frame, text="Enter text:")
-input_text = CTk.CTkTextbox(left_frame, height=250, width=600)
+input_text = CTk.CTkTextbox(left_frame, width=600)
 label_label = CTk.CTkLabel(left_frame, text="Enter label:")
 label_input = CTk.CTkEntry(left_frame, width=300)
 format_button = CTk.CTkButton(left_frame, text="Format", command=format_text)
 output_label = CTk.CTkLabel(left_frame, text="Formatted text:")
-output_text = CTk.CTkTextbox(left_frame, height=250, width=600)
+output_text = CTk.CTkTextbox(left_frame, width=600)
 copy_button = CTk.CTkButton(
     left_frame, text="Copy to Clipboard", command=copy_to_clipboard)
 
 input_label.pack()
-input_text.pack()
+input_text.pack(fill="both", expand=True)
 label_label.pack()
 label_input.pack()
 format_button.pack(pady=10)
 output_label.pack()
-output_text.pack()
+output_text.pack(fill="both", expand=True)
 copy_button.pack(side="bottom", pady=5)
 
 # Right frame
@@ -282,7 +289,7 @@ scale_text = CTk.CTkTextbox(right_frame)
 scale_label = CTk.CTkLabel(right_frame, text="Enter scale values:")
 
 scale_label.pack()
-scale_text.pack()
+scale_text.pack(fill="x", expand=True)
 
 # Scores
 scoring_scheme = CTk.StringVar(value="incremental")
@@ -383,7 +390,6 @@ button_input.pack()
 # Main window
 show_options(question_type.get())  # show options for given question type
 
-root.resizable(False, False)  # disable resizing
 bind_all_text_widgets(root)  # apply ctrl+a to all text widgets
 
 root.mainloop()
