@@ -18,7 +18,7 @@ A simple python tool for fast conversion of questionnaires into [PsyToolkit](htt
 
 ### Source code
 
-Best way to run this script is to use python source file. Make sure to install [python](https://www.python.org/) beforehand and chcek *Add python to PATH* while installing. `customtkinter` and 'pillow' modules is currently needed, so you need to install it by opening the terminal window and typing:
+Best way to run this script is to use python source file. Make sure to install [python](https://www.python.org/) beforehand and chcek *Add python to PATH* while installing. `customtkinter` and `pillow` modules is currently needed, so you need to install it by opening the terminal window and typing:
 
 ```bash
 pip install customtkinter
