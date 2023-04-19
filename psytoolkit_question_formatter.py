@@ -190,8 +190,8 @@ qf_button = CTk.CTkCheckBox(
 numbers_button = CTk.CTkCheckBox(
     options_frame, text="Show numbers in front of items", variable=numbers)
 
-options_buttons = ["random_button", "end_button", "link_button",
-                   "free_button", "requie_button", "sep_button", "qf_button", "numbers_button"]
+options_buttons = ["random_button", "end_button", "link_button", "numbers_button",
+                   "free_button", "requie_button", "sep_button", "qf_button"]
 
 
 def clean_options():
