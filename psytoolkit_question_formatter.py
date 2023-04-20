@@ -143,6 +143,15 @@ def bind_all_text_widgets(parent):
             bind_all_text_widgets(widget)
 
 
+def clear_text():
+    '''
+    Clears all text widgets
+    '''
+    input_text.delete("1.0", "end")
+    output_text.delete("1.0", "end")
+    label_input.delete("0", "end")
+
+
 # root
 root = CTk.CTk()
 root.title("PsyToolkit Questionnaire Formatter")
@@ -194,7 +203,7 @@ options_buttons = ["random_button", "end_button", "link_button", "numbers_button
                    "free_button", "requie_button", "sep_button", "qf_button"]
 
 
-def clean_options():
+def clear_options():
     '''
     clears options checkboxes
     '''
@@ -207,7 +216,7 @@ def show_options(question_type_selected):
     '''
     shows options checkboxes based on question type
     '''
-    clean_options()
+    clear_options()
     for widget in options_buttons:
         globals()[widget].pack(pady=5, anchor="w")
     if question_type_selected in type_group_free:
@@ -272,6 +281,7 @@ output_label = CTk.CTkLabel(left_frame, text="Formatted text:")
 output_text = CTk.CTkTextbox(left_frame, width=600)
 copy_button = CTk.CTkButton(
     left_frame, text="Copy to Clipboard", command=copy_to_clipboard)
+clear_button = CTk.CTkButton(left_frame, text="Clear", command=clear_text)
 
 input_label.pack()
 input_text.pack(fill="both", expand=True)
@@ -280,12 +290,13 @@ label_input.pack()
 format_button.pack(pady=10)
 output_label.pack()
 output_text.pack(fill="both", expand=True)
+clear_button.pack(side="bottom", pady=5)
 copy_button.pack(side="bottom", pady=5)
 
 # Right frame
 # Scale
-scale_text = CTk.CTkTextbox(right_frame)
 scale_label = CTk.CTkLabel(right_frame, text="Enter scale values:")
+scale_text = CTk.CTkTextbox(right_frame)
 
 scale_label.pack()
 scale_text.pack(fill="x", expand=True)
@@ -385,6 +396,23 @@ button_input = CTk.CTkEntry(right_frame, width=300)
 
 button_label.pack()
 button_input.pack()
+
+# Clear scores button
+
+
+def clear_right_frame():
+    '''
+    Restores right frame to default.
+    '''
+    show_options(question_type.get())
+    scale_text.delete("1.0", "end")
+    button_input.delete(0, "end")
+
+
+clear_scores_button = CTk.CTkButton(
+    right_frame, text="Clear scores and options", command=clear_right_frame)
+
+clear_scores_button.pack(pady=10, side="bottom")
 
 # Main window
 show_options(question_type.get())  # show options for given question type
