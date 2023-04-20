@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-'''
+"""
 A simple formatter for making questionaires in PsyToolbox faster by Jakub Jędrusiak.
-'''
+"""
 
 import sys
 import os
@@ -19,92 +19,110 @@ type_group_info = ["info"]  # o: end
 
 
 def format_text():
-    '''
+    """
     Main formatting function
-    '''
-    text = input_text.get("1.0", "end").strip()
+    """
     label_text = label_input.get().strip()
-    lines = text.split("\n")
-    scale = scale_text.get("1.0", "end").strip()
-    answers = scale.split("\n")
-    q_type = question_type.get()
+    lines = input_text.get("1.0", "end").strip().split("\n")
     output = ""
     count = 1  # for labels
-    # Get scores list
-    scores = []
-    for scale_entry in answers:
-        is_scored = match(r"{score=(\d+)}\s*(.*)", scale_entry)
-        if is_scored:
-            scores.append(int(is_scored.group(1)))
 
     for line in lines:
         if line in ["----", "page: begin", "page: end"]:
             output += f"{line}\n\n"
             continue
-        output += f"l: {label_text}_{count}\nt: {q_type}\n"
+        output += f"l: {label_text}_{count}\nt: {question_type.get()}\n"
 
-        # Options
-        if random.get():
-            output += "o: random\n"
-        if link.get():
-            output += "o: link\n"
-        if q_type in type_group_info and end.get():
-            output += "o: end\n"
-        if q_type in type_group_free and free.get():
-            output += "o: free\n"
-        if q_type in type_group_requie and requie.get():
-            output += "o: requie"
-            if min_entry.get() != "":
-                output += f" {min_entry.get().strip()}"
-                if max_entry.get() != "":
-                    output += f" {max_entry.get().strip()}"
-            output += "\n"
-        if sep.get():
-            output += "o: sep\n"
-        if qf.get():
-            output += "o: qf\n"
-        if numbers.get():
-            output += "o: numbers\n"
         if button_input.get().strip() != "":
             output += f"b: {button_input.get().strip()}\n"
 
         # check if the question has asterisk at the end
         if line.endswith("*"):
-            current_scores = list(reversed(scores))
             reversed_scoring = True
             line = line[:-1]
         else:
             reversed_scoring = False
 
+        # Options
+        output += print_options()
+
         # Question
         output += f"q: {line}\n"
-
-        # Answers
-        score_number = 0
-        if len(answers) > 1:
-            for scale_entry in answers:
-                if reversed_scoring:
-                    is_scored = match(r"{score=\d+}\s*(.*)", scale_entry)
-                    if is_scored:
-                        answer = is_scored.group(1)
-                        # inserts next element from scores list
-                        score = current_scores[score_number]
-                        output += f"- {{score={score}}} {answer}\n"
-                        score_number += 1
-                    else:
-                        output += f"- {scale_entry}\n"
-                else:
-                    output += f"- {scale_entry}\n"
-        output += "\n"
+        output += print_answers(reversed_scoring)
         count += 1
+
     output_text.delete("1.0", "end")
     output_text.insert("1.0", output.strip())
 
 
+def print_options():
+    """
+    Prints options "o: " in the output
+    """
+    output = ""
+    # Options
+    if random.get():
+        output += "o: random\n"
+    if link.get():
+        output += "o: link\n"
+    if question_type.get() in type_group_info and end.get():
+        output += "o: end\n"
+    if question_type.get() in type_group_free and free.get():
+        output += "o: free\n"
+    if question_type.get() in type_group_requie and requie.get():
+        output += "o: requie"
+        if min_entry.get() != "":
+            output += f" {min_entry.get().strip()}"
+            if max_entry.get() != "":
+                output += f" {max_entry.get().strip()}"
+        output += "\n"
+    if sep.get():
+        output += "o: sep\n"
+    if qf.get():
+        output += "o: qf\n"
+    if numbers.get():
+        output += "o: numbers\n"
+    return output
+
+
+def print_answers(reversed_scoring):
+    """
+    Prints answers "- " in the output, reverses scoring if reversed_scoring is True
+    """
+    output = ""
+    # Get scores list
+    answers = scale_text.get("1.0", "end").strip().split("\n")
+    scores = []
+    for scale_entry in answers:
+        is_scored = match(r"{score=(\d+)}\s*(.*)", scale_entry)
+        if is_scored:
+            scores.append(int(is_scored.group(1)))
+    # Answers
+    score_number = 0
+    if reversed_scoring:
+        current_scores = list(reversed(scores))
+    if len(answers) > 1 or answers[0] != "":
+        for scale_entry in answers:
+            if reversed_scoring:
+                is_scored = match(r"{score=\d+}\s*(.*)", scale_entry)
+                if is_scored:
+                    answer = is_scored.group(1)
+                    # inserts next element from scores list
+                    score = current_scores[score_number]
+                    output += f"- {{score={score}}} {answer}\n"
+                    score_number += 1
+                else:
+                    output += f"- {scale_entry}\n"
+            else:
+                output += f"- {scale_entry}\n"
+    output += "\n"
+    return output
+
+
 def copy_to_clipboard():
-    '''
+    """
     Copy to clipboard function
-    '''
+    """
     formatted_text = output_text.get("1.0", "end").strip()
     if formatted_text:
         root.clipboard_clear()
@@ -112,7 +130,7 @@ def copy_to_clipboard():
 
 
 def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
+    """Get absolute path to resource, works for dev and for PyInstaller"""
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS
         base_path = sys._MEIPASS
@@ -123,19 +141,19 @@ def resource_path(relative_path):
 
 
 def select_all(event):
-    '''
+    """
     Selects all text in a text widget
-    '''
+    """
     event.widget.tag_add(tkinter.SEL, "1.0", tkinter.END)
     event.widget.mark_set(tkinter.INSERT, "1.0")
     event.widget.see(tkinter.INSERT)
-    return 'break'
+    return "break"
 
 
 def bind_all_text_widgets(parent):
-    '''
+    """
     Binds select all shortcut to ctrl+a in all text widgets
-    '''
+    """
     for widget in parent.winfo_children():
         if isinstance(widget, CTk.CTkTextbox):
             widget.bind("<Control-a>", select_all)
@@ -144,9 +162,9 @@ def bind_all_text_widgets(parent):
 
 
 def clear_text():
-    '''
+    """
     Clears all text widgets
-    '''
+    """
     input_text.delete("1.0", "end")
     output_text.delete("1.0", "end")
     label_input.delete("0", "end")
@@ -183,39 +201,56 @@ numbers = tkinter.BooleanVar()
 checkboxes_vars = [random, end, link, free, requie, sep, qf, numbers]
 
 random_button = CTk.CTkCheckBox(
-    options_frame, text="Show items in a random order", variable=random)
+    options_frame, text="Show items in a random order", variable=random
+)
 end_button = CTk.CTkCheckBox(
-    options_frame, text="End questionnaire after this question", variable=end)
+    options_frame, text="End questionnaire after this question", variable=end
+)
 link_button = CTk.CTkCheckBox(
-    options_frame, text="Link to previous question (typically not necessary)", variable=link)
+    options_frame,
+    text="Link to previous question (typically not necessary)",
+    variable=link,
+)
 free_button = CTk.CTkCheckBox(
-    options_frame, text="Do not require participant to select any item", variable=free)
+    options_frame, text="Do not require participant to select any item", variable=free
+)
 requie_button = CTk.CTkCheckBox(
-    options_frame, text="Require participant to select any item", variable=requie)
+    options_frame, text="Require participant to select any item", variable=requie
+)
 sep_button = CTk.CTkCheckBox(
     options_frame, text="Save data anonymously", variable=sep)
 qf_button = CTk.CTkCheckBox(
-    options_frame, text="Show question text above image/video (if any)", variable=qf)
+    options_frame, text="Show question text above image/video (if any)", variable=qf
+)
 numbers_button = CTk.CTkCheckBox(
-    options_frame, text="Show numbers in front of items", variable=numbers)
+    options_frame, text="Show numbers in front of items", variable=numbers
+)
 
-options_buttons = ["random_button", "end_button", "link_button", "numbers_button",
-                   "free_button", "requie_button", "sep_button", "qf_button"]
+options_buttons = [
+    "random_button",
+    "end_button",
+    "link_button",
+    "numbers_button",
+    "free_button",
+    "requie_button",
+    "sep_button",
+    "qf_button",
+]
 
 
 def clear_options():
-    '''
+    """
     clears options checkboxes
-    '''
+    """
     for widget in options_buttons:
         globals()[widget].deselect()
         globals()[widget].pack_forget()
 
 
 def show_options(question_type_selected):
-    '''
+    """
     shows options checkboxes based on question type
-    '''
+    """
     clear_options()
     for widget in options_buttons:
         globals()[widget].pack(pady=5, anchor="w")
@@ -247,9 +282,9 @@ min_entry = CTk.CTkEntry(options_frame, width=300)
 
 
 def requie_borders():
-    '''
+    """
     minimum and maximum textboxes for o: requie
-    '''
+    """
     if question_type.get() in type_group_requie and requie.get():
         min_label.pack()
         min_entry.pack()
@@ -266,10 +301,13 @@ def requie_borders():
 question_type = CTk.StringVar(value="radio")
 input_label = CTk.CTkLabel(root, text="Question type:")
 input_menu = CTk.CTkOptionMenu(
-    root, values=type_group_free+type_group_requie+type_group_rank+type_group_info,
-    variable=question_type, command=show_options)
-input_label.grid(row=0, column=0, pady=(5, 0), padx=10, sticky='w')
-input_menu.grid(row=1, column=0, padx=10, columnspan=2, sticky='ew')
+    root,
+    values=type_group_free + type_group_requie + type_group_rank + type_group_info,
+    variable=question_type,
+    command=show_options,
+)
+input_label.grid(row=0, column=0, pady=(5, 0), padx=10, sticky="w")
+input_menu.grid(row=1, column=0, padx=10, columnspan=2, sticky="ew")
 
 # Left frame
 input_label = CTk.CTkLabel(left_frame, text="Enter text:")
@@ -280,7 +318,8 @@ format_button = CTk.CTkButton(left_frame, text="Format", command=format_text)
 output_label = CTk.CTkLabel(left_frame, text="Formatted text:")
 output_text = CTk.CTkTextbox(left_frame, width=600)
 copy_button = CTk.CTkButton(
-    left_frame, text="Copy to Clipboard", command=copy_to_clipboard)
+    left_frame, text="Copy to Clipboard", command=copy_to_clipboard
+)
 clear_button = CTk.CTkButton(left_frame, text="Clear", command=clear_text)
 
 input_label.pack()
@@ -308,15 +347,15 @@ preserve_scores = CTk.BooleanVar()
 
 
 def add_scores():
-    '''
+    """
     Adds scores to scales, incremental by default, preserves existing.
-    '''
+    """
     if not preserve_scores.get():
         remove_scores()
     text = scale_text.get("1.0", "end").strip()
     lines = text.split("\n")
     output = ""
-    count = int(default_score.get())-1
+    count = int(default_score.get()) - 1
     if scoring_scheme.get() == "decremental":
         count += len(lines) + 1
     for line in lines:
@@ -333,9 +372,9 @@ def add_scores():
 
 
 def remove_scores():
-    '''
+    """
     Removes scores from scale.
-    '''
+    """
     text = scale_text.get("1.0", "end").strip()
     lines = text.split("\n")
     output = ""
@@ -347,9 +386,9 @@ def remove_scores():
 
 
 def score_options():
-    '''
+    """
     Opens Score Options window to change defaults
-    '''
+    """
     score_options_window = CTk.CTkToplevel(root)
     score_options_window.title("Score Options")
     score_options_window.geometry("300x210")
@@ -358,15 +397,25 @@ def score_options():
     scoring_scheme_label = CTk.CTkLabel(
         score_options_window, text="Scoring scheme:")
     scoring_scheme_dropdown = CTk.CTkOptionMenu(
-        score_options_window, values=["incremental", "decremental", "fixed"], variable=scoring_scheme)
+        score_options_window,
+        values=["incremental", "decremental", "fixed"],
+        variable=scoring_scheme,
+    )
     default_score_label = CTk.CTkLabel(
-        score_options_window, text="Deafult score (to start from or end on):")
+        score_options_window, text="Deafult score (to start from or end on):"
+    )
     default_score_entery = CTk.CTkEntry(
-        score_options_window, textvariable=default_score)
+        score_options_window, textvariable=default_score
+    )
     preserve_scores_checkbox = CTk.CTkCheckBox(
-        score_options_window, text="Preserve existing scores when adding", variable=preserve_scores)
+        score_options_window,
+        text="Preserve existing scores when adding",
+        variable=preserve_scores,
+    )
     scoring_note = CTk.CTkLabel(
-        score_options_window, text="Note: add an asterisk * at the end\nof an item to invert scoring for the item.")
+        score_options_window,
+        text="Note: add an asterisk * at the end\nof an item to invert scoring for the item.",
+    )
 
     scoring_scheme_label.pack()
     scoring_scheme_dropdown.pack(pady=(0, 10))
@@ -378,9 +427,11 @@ def score_options():
 
 score_frame = CTk.CTkFrame(right_frame)
 remove_scores_button = CTk.CTkButton(
-    score_frame, text="Remove scores", command=remove_scores)
+    score_frame, text="Remove scores", command=remove_scores
+)
 score_options_button = CTk.CTkButton(
-    score_frame, text="Score options", command=score_options)
+    score_frame, text="Score options", command=score_options
+)
 add_scores_button = CTk.CTkButton(
     score_frame, text="Add scores", command=add_scores)
 
@@ -401,9 +452,9 @@ button_input.pack()
 
 
 def clear_right_frame():
-    '''
+    """
     Restores right frame to default.
-    '''
+    """
     show_options(question_type.get())
     requie_borders()
     scale_text.delete("1.0", "end")
@@ -411,7 +462,8 @@ def clear_right_frame():
 
 
 clear_scores_button = CTk.CTkButton(
-    right_frame, text="Clear scores and options", command=clear_right_frame)
+    right_frame, text="Clear scores and options", command=clear_right_frame
+)
 
 clear_scores_button.pack(pady=10, side="bottom")
 
@@ -420,6 +472,6 @@ show_options(question_type.get())  # show options for given question type
 
 bind_all_text_widgets(root)  # apply ctrl+a to all text widgets
 
-root.minsize(root.winfo_width()+15, root.winfo_height())
+root.minsize(root.winfo_width() + 15, root.winfo_height())
 
 root.mainloop()
