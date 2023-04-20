@@ -183,7 +183,7 @@ numbers = tkinter.BooleanVar()
 checkboxes_vars = [random, end, link, free, requie, sep, qf, numbers]
 
 random_button = CTk.CTkCheckBox(
-    options_frame, text="Show items in a random order", variable=random, )
+    options_frame, text="Show items in a random order", variable=random)
 end_button = CTk.CTkCheckBox(
     options_frame, text="End questionnaire after this question", variable=end)
 link_button = CTk.CTkCheckBox(
@@ -405,6 +405,7 @@ def clear_right_frame():
     Restores right frame to default.
     '''
     show_options(question_type.get())
+    requie_borders()
     scale_text.delete("1.0", "end")
     button_input.delete(0, "end")
 
